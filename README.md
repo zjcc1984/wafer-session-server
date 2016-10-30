@@ -48,15 +48,25 @@ session_duration:session过期时间，单位为秒，默认3600妙
 session表 cSessionInfo
     
 +-----------------+--------------+------+-----+---------+----------------+
+
 | Field           | Type         | Null | Key | Default | Extra          |
+
 +-----------------+--------------+------+-----+---------+----------------+
+
 | id              | bigint(20)   | NO   | MUL | NULL    | auto_increment |
+
 | skey            | varchar(200) | NO   |     | NULL    |                |
+
 | create_time     | int(11)      | NO   |     | NULL    |                |
+
 | last_visit_time | int(11)      | NO   |     | NULL    |                |
+
 | open_id         | varchar(200) | NO   | MUL | NULL    |                |
+
 | session_key     | varchar(200) | NO   |     | NULL    |                |
+
 | user_info       | text         | YES  |     | NULL    |                |
+
 +-----------------+--------------+------+-----+---------+----------------+
 
 字段解释
