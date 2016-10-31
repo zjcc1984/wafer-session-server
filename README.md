@@ -130,44 +130,55 @@ session表 cSessionInfo
   
   </tbody>
 </table>
-    
-+-----------------+--------------+------+-----+---------+----------------+
 
-| Field           | Type         | Null | Key | Default | Extra          |
-
-+-----------------+--------------+------+-----+---------+----------------+
-
-| id              | bigint(20)   | NO   | MUL | NULL    | auto_increment |
-
-| skey            | varchar(200) | NO   |     | NULL    |                |
-
-| create_time     | int(11)      | NO   |     | NULL    |                |
-
-| last_visit_time | int(11)      | NO   |     | NULL    |                |
-
-| open_id         | varchar(200) | NO   | MUL | NULL    |                |
-
-| session_key     | varchar(200) | NO   |     | NULL    |                |
-
-| user_info       | text         | YES  |     | NULL    |                |
-
-+-----------------+--------------+------+-----+---------+----------------+
-
-字段解释
- 
-id：登录成功时返回给小程序服务端的id（鉴权使用），自增长。
-    
-skey：登录成功时返回给小程序服务端的skey（鉴权使用）
-    
-create_time:session创建时间，用于判断登录的open_id和session_key 是否过期(是否超过cAppInfo表中字段login_duration的天数)。
-    
-last_visit_time:session最近访问时间，用于判断session是否过期(是否超过cAppInfo表中字段session_duration的秒数)。
-
-open_id和session_key是微信服务端返回的。
-    
-user_info指的是用户数据。
-    
 建数据库的详细sql脚本位于./system/db/目录下的db.sql。
+
+db.sql内容如下
+
+    create database cAuth;
+    
+    use cAuth;
+
+    DROP TABLE IF EXISTS `cAppinfo`;
+
+    CREATE TABLE `cAppinfo` (
+
+      `appid` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  
+      `secret` varchar(300) COLLATE utf8_unicode_ci NOT NULL,
+  
+      `login_duration` int(11) DEFAULT '30',
+  
+      `session_duration` int(11) DEFAULT '3600',
+  
+    PRIMARY KEY (`appid`)
+  
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+    DROP TABLE IF EXISTS `cSessioninfo`;
+
+    CREATE TABLE `cSessioninfo` (
+
+      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  
+      `skey` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  
+      `create_time` int(11) NOT NULL,
+  
+      `last_visit_time` int(11) NOT NULL,
+  
+      `open_id` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  
+      `session_key` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  
+      `user_info` text COLLATE utf8_unicode_ci,
+  
+      KEY `auth` (`id`,`skey`),
+  
+      KEY `wexin` (`open_id`,`session_key`)
+  
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 
 ## 会话管理接口协议
 
