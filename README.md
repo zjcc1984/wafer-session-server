@@ -24,6 +24,47 @@
 ## 会话管理数据库设计
 
 全局信息表 cAppInfo
+
+<table>
+  <tbody>
+  <tr>
+    <th>Field</th>
+    <th>Type</th>
+    <th>Null</th>
+    <th>key</th>
+    <th>Extra</th>
+  </tr>
+  <tr>
+    <td>  appid </td>
+    <td> varchar(200) </td>
+    <td> NO </td>
+    <td> PRI </td>
+    <td> 申请微信小程序开发者时，微信分配的appid值 </td>
+  </tr>
+  <tr>
+    <td>  secret  </td>
+    <td> varchar(300) </td>
+    <td> NO </td>
+    <td>  </td>
+    <td> 申请微信小程序开发者时，微信分配的secret值 </td>
+  </tr>
+  <tr>
+    <td>  login_duration  </td>
+    <td>  int(11) </td>
+    <td> NO </td>
+    <td>  </td>
+    <td> 登录过期时间，单位为天，默认30天</td>
+  </tr>
+  <tr>
+    <td>  session_duration  </td>
+    <td>  int(11) </td>
+    <td> NO </td>
+    <td>  </td>
+    <td> session过期时间，单位为秒，默认3600妙 </td>
+  </tr>
+  
+  </tbody>
+</table>
     
 +------------------+--------------+------+-----+--------------+-------+
 
