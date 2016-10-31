@@ -66,31 +66,70 @@
   </tbody>
 </table>
     
-+------------------+--------------+------+-----+--------------+-------+
-
-| Field            | Type         | Null | Key | Default      | Extra |
-
-+------------------+--------------+------+-----+--------------+-------+
-
-| appid            | varchar(200) | NO   | PRI | NULL         |       |
-
-| secret           | varchar(300) | NO   |     | NULL         |       |
-
-| login_duration   | int(11)      | YES  |     | 30           |       |
-
-| session_duration | int(11)      | YES  |     | 3600         |       |
-
-+------------------+--------------+------+-----+--------------+-------+
-
-字段解释
- 
-appid和secret是在申请微信小程序时，微信分配的两个字段值。
- 
-login_duration:是登录过期时间，单位为天，默认30天。
-    
-session_duration:session过期时间，单位为秒，默认3600妙
 
 session表 cSessionInfo
+
+<table>
+  <tbody>
+  <tr>
+    <th>Field</th>
+    <th>Type</th>
+    <th>Null</th>
+    <th>key</th>
+    <th>Extra</th>
+  </tr>
+  <tr>
+    <td> id </td>
+    <td>  bigint(20) </td>
+    <td> NO </td>
+    <td> MUL </td>
+    <td> 登录成功时返回给小程序服务端的id（鉴权使用），自增长 </td>
+  </tr>
+  <tr>
+    <td>  skey  </td>
+    <td> varchar(200) </td>
+    <td> NO </td>
+    <td>  </td>
+    <td> 登录成功时返回给小程序服务端的skey（鉴权使用） </td>
+  </tr>
+  <tr>
+    <td>  create_time  </td>
+    <td>  int(11) </td>
+    <td> NO </td>
+    <td>  </td>
+    <td> session创建时间，用于判断登录的open_id和session_key 是否过期(是否超过cAppInfo表中字段login_duration的天数)</td>
+  </tr>
+  <tr>
+    <td>  last_visit_time  </td>
+    <td>  int(11) </td>
+    <td> NO </td>
+    <td>  </td>
+    <td> session最近访问时间，用于判断session是否过期(是否超过cAppInfo表中字段session_duration的秒数) </td>
+  </tr>
+  <tr>
+    <td>  open_id  </td>
+    <td>   varchar(200) </td>
+    <td> NO </td>
+    <td> MUL </td>
+    <td> 微信服务端返回的open_id值 </td>
+  </tr>
+  <tr>
+    <td> session_key  </td>
+    <td>   varchar(200) </td>
+    <td> NO </td>
+    <td>  </td>
+    <td> 微信服务端返回的session_key值 </td>
+  </tr>
+  <tr>
+    <td>  user_info  </td>
+    <td> text </td>
+    <td> YES </td>
+    <td>  </td>
+    <td> 用户数据 </td>
+  </tr>
+  
+  </tbody>
+</table>
     
 +-----------------+--------------+------+-----+---------+----------------+
 
