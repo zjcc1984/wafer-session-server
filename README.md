@@ -223,38 +223,79 @@ db.sql内容如下
     curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.auth","para":{"id":"4","skey":"f27b6d7724479266761075243bc223c5"}}}' http://127.0.0.1/mina_auth/
 
 ## 会话管理错误码解释
+<table>
+  <tbody>
+  <tr>
+    <th>错误码</th>
+    <th>解释</th>
+  </tr>
+  <tr>
+    <td> 0 </td>
+    <td>  成功返回码 </td>
+  </tr>
+  <tr>
+    <td> 1001 </td>
+    <td> 数据库错误 </td>
+  </tr>
+   <tr>
+    <td> 1002 </td>
+    <td> 接口不存在 </td>
+  </tr>
+  <tr>
+    <td> 1003 </td>
+    <td> 参数错误 </td>
+  </tr>
+  <tr>
+    <td> 60021 </td>
+    <td> 解密失败 </td>
+  </tr>
+  <tr>
+    <td> 1005 </td>
+    <td> 连接微信服务器失败 </td>
+  </tr>
+  <tr>
+    <td> 40029 </td>
+    <td> CODE无效 </td>
+  </tr>
+   <tr>
+    <td> 1006 </td>
+    <td> 新增、修改SESSION失败 </td>
+  </tr>
+  <tr>
+    <td> 1007 </td>
+    <td> 微信返回值错误 </td>
+  </tr>
+  <tr>
+    <td> 60012 </td>
+    <td> 鉴权失败 </td>
+  </tr>
+  <tr>
+    <td>1008</td>
+    <td>更新最近访问时间失败 </td>
+  </tr>
+  <tr>
+    <td>1009</td>
+    <td>请求包不是json</td>
+  </tr>
+  <tr>
+    <td>1010</td>
+    <td>接口名称错误</td>
+  </tr>
+  <tr>
+    <td>1011</td>
+    <td>参数不存在</td>
+  </tr>
+   <tr>
+    <td>1012</td>
+    <td>不能获取AppID</td>
+  </tr>
+   <tr>
+    <td>1013</td>
+    <td>初始化AppID失败</td>
+  </tr>
+  </tbody>
+</table>
 
-0;      //成功返回码
-
-1001;    // Mysql错误等
-
-1002;    // 接口参数不存在
-
-1003;    //参数错误
-
-60021;   //解密失败
-
-1005;    //连接微信服务器失败
-
-40029;   //CODE无效
-
-1006;    //新增修改SESSION失败
-
-1007;    //微信返回值错误
-
-60012;   //鉴权失败
-
-1008;    //更新最近访问时间失败
-
-1009;    //请求包不是json
-
-1010;    //接口名称错误
-
-1011;    //不存在参数
-
-1012;    //不能获取AppID
-
-1013;    //初始化AppID失败
 
 ## 会话管理服务器快速搭建
 
