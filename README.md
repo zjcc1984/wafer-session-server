@@ -210,7 +210,7 @@ db.sql内容如下
 
 使用示例：
 
-    curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.id_skey","para":{"code":"001EWYiD1CVtKg0jXGjD1e6WiD1EWYiC","encrypt_data":"DNlJKYA0mJ3+RDXD/syznaLVLlaF4drGzeZvJFmjnEKtOAi37kAzC/1tCBr7KqGX8EpiLuWl8qt/kcH9a4LxDC5LQvlRLJlDogTEIwtlT/2jBWBuWwBC3vWFhm7Uuq5AOLZV+xG9UmWPKECDZX9UZpWcPRGQpiY8OOUNBAywVniJv6rC2eADFimdRR2qPiebdC3cry7QAvgvttt1Wk56Nb/1TmIbtJRTay5wb+6AY1H7AT1xPoB6XAXW3RqODXtRR0hZT1s/o5y209Vcc6EBal5QdsbJroXa020ZSD62EnlrOwgYnXy5c8SO+bzNAfRw59SVbI4wUNYz6kJb4NDn+y9dlASRjlt8Rau4xTQS+fZSi8HHUwkwE6RRak3qo8YZ7FWWbN2uwUKgQNlc/MfAfLRcfQw4XUqIdn9lxtRblaY="}}}' http://127.0.0.1/mina_auth
+    curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.id_skey","para":{"code":"001EWYiD1CVtKg0jXGjD1e6WiD1EWYiC","encrypt_data":"DNlJKYA0mJ3+RDXD/syznaLVLlaF4drGzeZvJFmjnEKtOAi37kAzC/1tCBr7KqGX8EpiLuWl8qt/kcH9a4LxDC5LQvlRLJlDogTEIwtlT/2jBWBuWwBC3vWFhm7Uuq5AOLZV+xG9UmWPKECDZX9UZpWcPRGQpiY8OOUNBAywVniJv6rC2eADFimdRR2qPiebdC3cry7QAvgvttt1Wk56Nb/1TmIbtJRTay5wb+6AY1H7AT1xPoB6XAXW3RqODXtRR0hZT1s/o5y209Vcc6EBal5QdsbJroXa020ZSD62EnlrOwgYnXy5c8SO+bzNAfRw59SVbI4wUNYz6kJb4NDn+y9dlASRjlt8Rau4xTQS+fZSi8HHUwkwE6RRak3qo8YZ7FWWbN2uwUKgQNlc/MfAfLRcfQw4XUqIdn9lxtRblaY="}}}' http://127.0.0.1/mina_auth/
 
 2）登录态校验
 
@@ -220,7 +220,7 @@ db.sql内容如下
 
 使用示例：
 
-    curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.auth","para":{"id":"4","skey":"f27b6d7724479266761075243bc223c5"}}}' http://127.0.0.1/mina_auth
+    curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.auth","para":{"id":"4","skey":"f27b6d7724479266761075243bc223c5"}}}' http://127.0.0.1/mina_auth/
 
 ## 会话管理错误码解释
 
@@ -275,4 +275,29 @@ db.sql内容如下
 ![image](https://cloud.githubusercontent.com/assets/12195370/19965255/20c224b8-a201-11e6-9092-5cbb15becb00.png)
                         
                                               图4 选择会话服务器镜像
-  
+                            
+2)登录购买的服务器手动配置mysql 
+
+2.1)编辑sql脚本
+
+    vi /opt/lampp/htdocs/mina_auth/system/db/db.sql
+    
+在脚本的最前端加入 use cAuth;
+
+2.2)自动建表
+
+    /opt/lampp/bin/mysql -u root -p </opt/lampp/htdocs/mina_auth/system/db/db.sql
+   
+2.3）初始化appid和scretkey
+
+    /opt/lampp/bin/mysql -u root -p #登录本地mysql
+    
+    use cAuth;#选中数据库
+    
+    insert into cAppinfo set appid='Your appid',secret='Your secret';
+    
+2.3)测试服务可用性
+   
+    curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.id_skey","para":{"code":"001EWYiD1CVtKg0jXGjD1e6WiD1EWYiC","encrypt_data":"DNlJKYA0mJ3+RDXD/syznaLVLlaF4drGzeZvJFmjnEKtOAi37kAzC/1tCBr7KqGX8EpiLuWl8qt/kcH9a4LxDC5LQvlRLJlDogTEIwtlT/2jBWBuWwBC3vWFhm7Uuq5AOLZV+xG9UmWPKECDZX9UZpWcPRGQpiY8OOUNBAywVniJv6rC2eADFimdRR2qPiebdC3cry7QAvgvttt1Wk56Nb/1TmIbtJRTay5wb+6AY1H7AT1xPoB6XAXW3RqODXtRR0hZT1s/o5y209Vcc6EBal5QdsbJroXa020ZSD62EnlrOwgYnXy5c8SO+bzNAfRw59SVbI4wUNYz6kJb4NDn+y9dlASRjlt8Rau4xTQS+fZSi8HHUwkwE6RRak3qo8YZ7FWWbN2uwUKgQNlc/MfAfLRcfQw4XUqIdn9lxtRblaY="}}}' http://127.0.0.1/mina_auth/
+    
+    
