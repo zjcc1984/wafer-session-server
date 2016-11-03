@@ -258,8 +258,21 @@ db.sql内容如下
 
 ## 会话管理服务器的使用方法
 
-1)进入腾讯云官网购买云服务器CVM
+1)[进入腾讯云官网购买云服务器CVM](https://www.qcloud.com/product/cvm.html)
 
 ![image](https://cloud.githubusercontent.com/assets/12195370/19964833/f6b57b22-a1fe-11e6-9cdf-512c318eabfb.png)
 
-图1 选购云服务器CVM
+                                              图1 选购云服务器CVM
+                                              
+![image](https://cloud.githubusercontent.com/assets/12195370/19965033/074bb400-a200-11e6-8f00-9909635fb616.png) 
+
+                                              图2 选择机型
+                                              
+![image](https://cloud.githubusercontent.com/assets/12195370/19965102/529823d0-a200-11e6-891f-ee0e8552af95.png)
+                                              
+                                              图3 在服务市场中选择镜像
+                                              
+![image](https://cloud.githubusercontent.com/assets/12195370/19965255/20c224b8-a201-11e6-9092-5cbb15becb00.png)
+                        
+                                              图4 选择会话服务器镜像
+  
