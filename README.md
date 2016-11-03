@@ -256,7 +256,7 @@ db.sql内容如下
 
 1013;    //初始化AppID失败
 
-## 会话管理服务器的使用方法
+## 会话管理服务器快速搭建
 
 1)[进入腾讯云官网购买云服务器CVM](https://www.qcloud.com/product/cvm.html)
 
