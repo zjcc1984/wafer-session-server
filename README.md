@@ -331,8 +331,7 @@ db.sql内容如下
    
 2.3）初始化appid和scretkey
 
-    
-    /opt/lampp/bin/mysql -u root -p #登录本地mysql
+    /opt/lampp/bin/mysql -u root -p root #登录本地mysql
     
     use cAuth;#选中数据库
     
