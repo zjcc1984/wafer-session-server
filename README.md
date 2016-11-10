@@ -8,7 +8,7 @@
 
    用户登录功能指的是：用户在微信小程序客户端发起登录请求时，首先经过微信客户端获取code以及用户加密数据的信息。此时只需将获取的这两个信息以参数的形式传递给会话管理服务器。会话管理服务器会根据code和用户加密数据，与微信服务端进行交互，如果鉴权通过会返回分配给该用户的id和skey，以及解密后的用户明文信息。如图所示
    
-   ![image](https://cloud.githubusercontent.com/assets/12195370/19835570/0170947a-9ec6-11e6-8e6a-6163afae4288.png)
+  ![image](https://cloud.githubusercontent.com/assets/12195370/20164321/c3e70040-a73e-11e6-84ac-2d5fe18577c4.png)
      
 2 登录态校验功能
      
