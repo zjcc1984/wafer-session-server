@@ -54,13 +54,12 @@ class Auth
                     $session_key = $json_message['session_key'];
                     $decrypt_data = new decrypt_data();
                     $user_info = $decrypt_data->aes128cbc_Decrypt($encrypt_data, $session_key);
-
+                    $user_info = base64_encode($user_info);
                     if ($user_info === false) {
                         $ret['returnCode'] = return_code::MA_DECRYPT_ERR;
                         $ret['returnMessage'] = 'DECRYPT_FAIL';
                         $ret['returnData'] = '';
                     } else {
-
                         $params = array(
                             "skey" => $skey,
                             "create_time" => $create_time,
@@ -77,7 +76,7 @@ class Auth
                             $id = $csessioninfo_service->get_id_csessioninfo($openid);
                             $arr_result['id'] = $id;
                             $arr_result['skey'] = $skey;
-                            $arr_result['user_info'] = json_decode($user_info);
+                            $arr_result['user_info'] = json_decode(base64_decode($user_info));
                             $arr_result['duration'] = $json_message['expires_in'];
                             $ret['returnCode'] = return_code::MA_OK;
                             $ret['returnMessage'] = 'NEW_SESSION_SUCCESS';
@@ -89,7 +88,7 @@ class Auth
                         } else {
                             $arr_result['id'] = $change_result;
                             $arr_result['skey'] = $skey;
-                            $arr_result['user_info'] = json_decode($user_info);
+                            $arr_result['user_info'] = json_decode(base64_decode($user_info));
                             $arr_result['duration'] = $json_message['expires_in'];
                             $ret['returnCode'] = return_code::MA_OK;
                             $ret['returnMessage'] = 'UPDATE_SESSION_SUCCESS';
@@ -175,7 +174,7 @@ class Auth
             $csessioninfo_service = new Csessioninfo_Service();
             $auth_result = $csessioninfo_service->check_session_for_auth($params);
             if ($auth_result!==false) {
-                $arr_result['user_info'] = json_decode($auth_result);
+                $arr_result['user_info'] = json_decode(base64_decode($auth_result));
                 $ret['returnCode'] = return_code::MA_OK;
                 $ret['returnMessage'] = 'AUTH_SUCCESS';
                 $ret['returnData'] = $arr_result;
@@ -319,4 +318,5 @@ class Auth
         }
         return $ret;
     }
+
 }

@@ -24,6 +24,7 @@ class Csessioninfo_Service
      */
     public function insert_csessioninfo($params)
     {
+
         $insert_sql = 'insert into cSessioninfo SET skey = "' . $params['skey'] . '",create_time = ' . $params['create_time'] . ',last_visit_time = ' . $params['last_visit_time'] . ',open_id = "' . $params['openid'] . '",session_key="' . $params['session_key'] . '",user_info=\''.$params['user_info'].'\'';
         $mysql_insert = new mysql_db();
         return $mysql_insert->query_db($insert_sql);
@@ -48,6 +49,7 @@ class Csessioninfo_Service
         $mysql_update = new mysql_db();
         return $mysql_update->query_db($update_sql);
     }
+
 
     /**
      * @param $id
@@ -116,7 +118,7 @@ class Csessioninfo_Service
     }
 
     public function check_session_for_login($params){
-        $select_sql = 'select *_time from cSessioninfo where open_id = "' . $params['openid'] . '"';
+        $select_sql = 'select * from cSessioninfo where open_id = "' . $params['openid'] . '"';
         $mysql_select = new mysql_db();
         $result = $mysql_select->select_db($select_sql);
         if ($result !== false && !empty($result)) {

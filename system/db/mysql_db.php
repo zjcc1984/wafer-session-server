@@ -78,6 +78,8 @@ class mysql_db
             mysql_select_db($this->data_base, $con);
             $arr_result = mysql_query($sql);
             mysql_close($con);
+            if(mysql_num_rows($arr_result) < 1)
+                return false;
             return $arr_result;
         } else {
             log_message("ERROR","$sql mysql_connect_err");
