@@ -1,228 +1,86 @@
-# session_server
+Wafer 会话服务器
+===============
 
-微信小程序会话管理为微信小程序提供会话管理服务，可以将它理解为session.它会为您的微信小程序提供简单的用户管理服务。
+本项目是 [Wafer](https://github.com/tencentyun/wafer) 组成部分，提供会话服务供 SDK 或独立使用。
 
-## 会话管理服务功能
-
-1）用户登录鉴权功能
-
-   用户登录功能指的是：用户在微信小程序客户端发起登录请求时，首先经过微信客户端获取code以及用户加密数据的信息。此时只需将获取的这两个信息以参数的形式传递给会话管理服务器。会话管理服务器会根据code和用户加密数据，与微信服务端进行交互，如果鉴权通过会返回分配给该用户的id和skey，以及解密后的用户明文信息。如图所示
-   
-  ![image](https://cloud.githubusercontent.com/assets/12195370/20164321/c3e70040-a73e-11e6-84ac-2d5fe18577c4.png)
-     
-2 登录态校验功能
-     
-   用户登录态校验功能指的是：微信小程序用户处于登录态时，如果下一步的操作需要用户态校验的时候，只要将在登录鉴权功能时分配的id和skey以参数的形式传递给会话管理服务器，会话管理便会提供鉴权功能，并返回鉴权结果。如图所示
-   
-   ![image](https://cloud.githubusercontent.com/assets/12195370/19835618/580cf7c8-9ec7-11e6-9add-8e7f3497095a.png)
-     
-     
-3）解密数据功能
-   
-   解密数据功能指的是：微信客户端返回给微信小程序的用户信息是通过加密的，所以需要解密后使用。
-    
-## 会话管理数据库设计
-
-全局信息表 cAppInfo
-
-<table>
-  <tbody>
-  <tr>
-    <th>Field</th>
-    <th>Type</th>
-    <th>Null</th>
-    <th>key</th>
-    <th>Extra</th>
-  </tr>
-  <tr>
-    <td>  appid </td>
-    <td> varchar(200) </td>
-    <td> NO </td>
-    <td> PRI </td>
-    <td> 申请微信小程序开发者时，微信分配的appid值 </td>
-  </tr>
-  <tr>
-    <td>  secret  </td>
-    <td> varchar(300) </td>
-    <td> NO </td>
-    <td>  </td>
-    <td> 申请微信小程序开发者时，微信分配的secret值 </td>
-  </tr>
-  <tr>
-    <td>  login_duration  </td>
-    <td>  int(11) </td>
-    <td> NO </td>
-    <td>  </td>
-    <td> 登录过期时间，单位为天，默认30天</td>
-  </tr>
-  <tr>
-    <td>  session_duration  </td>
-    <td>  int(11) </td>
-    <td> NO </td>
-    <td>  </td>
-    <td> session过期时间，单位为秒，默认3600妙 </td>
-  </tr>
-  
-  </tbody>
-</table>
-    
-
-session表 cSessionInfo
-
-<table>
-  <tbody>
-  <tr>
-    <th>Field</th>
-    <th>Type</th>
-    <th>Null</th>
-    <th>key</th>
-    <th>Extra</th>
-  </tr>
-  <tr>
-    <td> id </td>
-    <td>  bigint(20) </td>
-    <td> NO </td>
-    <td> MUL </td>
-    <td> 登录成功时返回给小程序服务端的id（鉴权使用），自增长 </td>
-  </tr>
-  <tr>
-    <td>  skey  </td>
-    <td> varchar(200) </td>
-    <td> NO </td>
-    <td>  </td>
-    <td> 登录成功时返回给小程序服务端的skey（鉴权使用） </td>
-  </tr>
-  <tr>
-    <td>  create_time  </td>
-    <td>  int(11) </td>
-    <td> NO </td>
-    <td>  </td>
-    <td> session创建时间，用于判断登录的open_id和session_key 是否过期(是否超过cAppInfo表中字段login_duration的天数)</td>
-  </tr>
-  <tr>
-    <td>  last_visit_time  </td>
-    <td>  int(11) </td>
-    <td> NO </td>
-    <td>  </td>
-    <td> session最近访问时间，用于判断session是否过期(是否超过cAppInfo表中字段session_duration的秒数) </td>
-  </tr>
-  <tr>
-    <td>  open_id  </td>
-    <td>   varchar(200) </td>
-    <td> NO </td>
-    <td> MUL </td>
-    <td> 微信服务端返回的open_id值 </td>
-  </tr>
-  <tr>
-    <td> session_key  </td>
-    <td>   varchar(200) </td>
-    <td> NO </td>
-    <td>  </td>
-    <td> 微信服务端返回的session_key值 </td>
-  </tr>
-  <tr>
-    <td>  user_info  </td>
-    <td> text </td>
-    <td> YES </td>
-    <td>  </td>
-    <td> 用户数据 </td>
-  </tr>
-  
-  </tbody>
-</table>
-
-建数据库的详细sql脚本位于./system/db/目录下的db.sql。
-
-db.sql内容如下
-
-    create database cAuth;
-    
-    use cAuth;
-
-    DROP TABLE IF EXISTS `cAppinfo`;
-
-    CREATE TABLE `cAppinfo` (
-
-      `appid` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  
-      `secret` varchar(300) COLLATE utf8_unicode_ci NOT NULL,
-  
-      `login_duration` int(11) DEFAULT '30',
-  
-      `session_duration` int(11) DEFAULT '3600'
-  
-    PRIMARY KEY (`appid`)
-  
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-    DROP TABLE IF EXISTS `cSessioninfo`;
-
-    CREATE TABLE `cSessioninfo` (
-
-      `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  
-      `skey` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  
-      `create_time` int(11) NOT NULL,
-  
-      `last_visit_time` int(11) NOT NULL,
-  
-      `open_id` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  
-      `session_key` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
-  
-      `user_info` text COLLATE utf8_unicode_ci,
-  
-      KEY `auth` (`id`,`skey`),
-  
-      KEY `wexin` (`open_id`,`session_key`)
-  
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+会话服务的实现细请参考 [Wiki](https://github.com/tencentyun/wafer/wiki/%E4%BC%9A%E8%AF%9D%E6%9C%8D%E5%8A%A1)。
 
 
-## 会话管理接口协议
+## 接口协议
 
-编码类型：utf8
+### 请求
 
-编码格式：json
+会话服务器提供 HTTP 接口来实现会话管理，下面是协议说明。
 
-传输方式：post
+* 协议类型：`HTTP`
+* 传输方式：`POST`
+* 编码类型：`UTF-8`
+* 编码格式：`JSON`
 
-请求协议：http
+请求示例：
 
-使用示例：
+```http
+POST /mina_auth/ HTTP/1.1
+Content-Type: application/json;charset=utf-8
 
-{"version":1,"componentName":"MA","interface":{"interfaceName":"接口名""para":{接口对应参数}}}
+{
+    "version": 1,
+    "componentName": "MA",
+    "interface": {
+        "interfaceName": "qcloud.cam.id_skey",
+        "para": { code: "...", encrypt_data: "..." }
+    }
+}
+```
 
-返回值:
+### 响应
+
+HTTP 输出为响应内容，下面是响应内容说明：
+
+* 内容编码：`UTF-8`
+* 内容格式：`JSON`
+
+响应示例：
+
+```json
+{
+    "returnCode": 0,
+    "returnMessage": "OK",
+    "returnData": {
+        "id": "...",
+        "skey": "..."
+    }
+}
+```
 
 返回结果。returnCode为返回码，如果成功则取值为0，如果失败则取值为具体错误码；returnMessage 内容为出错信息；returnData为具体内容。
 
-## 会话管理接口说明
+### `qcloud.cam.id_skey`
 
-对外提供两个接口分别是：
-
-1）用户登录
-
-接口名：qcloud.cam.id_skey
-
-返回值：id,ske以及用户信息
+`qcloud.cam.id_skey` 处理用户登录请求。
 
 使用示例：
 
-    curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.id_skey","para":{"code":"001EWYiD1CVtKg0jXGjD1e6WiD1EWYiC","encrypt_data":"DNlJKYA0mJ3+RDXD/syznaLVLlaF4drGzeZvJFmjnEKtOAi37kAzC/1tCBr7KqGX8EpiLuWl8qt/kcH9a4LxDC5LQvlRLJlDogTEIwtlT/2jBWBuWwBC3vWFhm7Uuq5AOLZV+xG9UmWPKECDZX9UZpWcPRGQpiY8OOUNBAywVniJv6rC2eADFimdRR2qPiebdC3cry7QAvgvttt1Wk56Nb/1TmIbtJRTay5wb+6AY1H7AT1xPoB6XAXW3RqODXtRR0hZT1s/o5y209Vcc6EBal5QdsbJroXa020ZSD62EnlrOwgYnXy5c8SO+bzNAfRw59SVbI4wUNYz6kJb4NDn+y9dlASRjlt8Rau4xTQS+fZSi8HHUwkwE6RRak3qo8YZ7FWWbN2uwUKgQNlc/MfAfLRcfQw4XUqIdn9lxtRblaY="}}}' http://127.0.0.1/mina_auth/
+```sh
+curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.id_skey","para":{"code":"001EWYiD1CVtKg0jXGjD1e6WiD1EWYiC","encrypt_data":"DNlJKYA0mJ3+RDXD/syznaLVLlaF4drGzeZvJFmjnEKtOAi37kAzC/1tCBr7KqGX8EpiLuWl8qt/kcH9a4LxDC5LQvlRLJlDogTEIwtlT/2jBWBuWwBC3vWFhm7Uuq5AOLZV+xG9UmWPKECDZX9UZpWcPRGQpiY8OOUNBAywVniJv6rC2eADFimdRR2qPiebdC3cry7QAvgvttt1Wk56Nb/1TmIbtJRTay5wb+6AY1H7AT1xPoB6XAXW3RqODXtRR0hZT1s/o5y209Vcc6EBal5QdsbJroXa020ZSD62EnlrOwgYnXy5c8SO+bzNAfRw59SVbI4wUNYz6kJb4NDn+y9dlASRjlt8Rau4xTQS+fZSi8HHUwkwE6RRak3qo8YZ7FWWbN2uwUKgQNlc/MfAfLRcfQw4XUqIdn9lxtRblaY="}}}' http://127.0.0.1/mina_auth/
+```
 
-2）登录态校验
+响应数据：
 
-接口名：qcloud.cam.auth
+* `id` - 会话 id
+* `skey` - 会话 skey
+* `userInfo` - 用户信息
 
-返回值：是否校验通过
+### `qcloud.cam.auth`
 
-使用示例：
+使用 `qcloud.cam.auth` 接口检查用户登录态。
 
-     curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.auth","para":{"id":"4","skey":"f27b6d7724479266761075243bc223c5"}}}' http://127.0.0.1/mina_auth/
+响应数据：
 
-## 会话管理错误码解释
+* `true` - 登录态有效
+* `false` - 登录态无效
+
+### 错误码
 <table>
   <tbody>
   <tr>
@@ -230,48 +88,36 @@ db.sql内容如下
     <th>解释</th>
   </tr>
   <tr>
-    <td> 0 </td>
-    <td>  成功返回码 </td>
+    <td>0</td>
+    <td>成功</td>
   </tr>
   <tr>
-    <td> 1001 </td>
-    <td> 数据库错误 </td>
+    <td>1001</td>
+    <td>数据库错误</td>
   </tr>
    <tr>
-    <td> 1002 </td>
-    <td> 接口不存在 </td>
+    <td>1002</td>
+    <td>接口不存在</td>
   </tr>
   <tr>
-    <td> 1003 </td>
-    <td> 参数错误 </td>
+    <td>1003</td>
+    <td>参数错误</td>
   </tr>
   <tr>
-    <td> 60021 </td>
-    <td> 解密失败 </td>
-  </tr>
-  <tr>
-    <td> 1005 </td>
-    <td> 连接微信服务器失败 </td>
-  </tr>
-  <tr>
-    <td> 40029 </td>
-    <td> CODE无效 </td>
+    <td>1005</td>
+    <td>连接微信服务器失败</td>
   </tr>
    <tr>
-    <td> 1006 </td>
-    <td> 新增、修改SESSION失败 </td>
+    <td>1006</td>
+    <td>新增或修改 SESSION 失败</td>
   </tr>
   <tr>
-    <td> 1007 </td>
-    <td> 微信返回值错误 </td>
-  </tr>
-  <tr>
-    <td> 60012 </td>
-    <td> 鉴权失败 </td>
+    <td>1007</td>
+    <td>微信返回值错误</td>
   </tr>
   <tr>
     <td>1008</td>
-    <td>更新最近访问时间失败 </td>
+    <td>更新最近访问时间失败</td>
   </tr>
   <tr>
     <td>1009</td>
@@ -287,58 +133,179 @@ db.sql内容如下
   </tr>
    <tr>
     <td>1012</td>
-    <td>不能获取AppID</td>
+    <td>不能获取 AppID</td>
   </tr>
    <tr>
     <td>1013</td>
-    <td>初始化AppID失败</td>
+    <td>初始化 AppID 失败</td>
+  </tr>
+  <tr>
+    <td>40029</td>
+    <td>CODE 无效</td>
+  </tr>
+  <tr>
+    <td>60021</td>
+    <td>解密失败</td>
+  </tr>
+  <tr>
+    <td>60012</td>
+    <td>鉴权失败</td>
   </tr>
   </tbody>
 </table>
 
-
-## 会话管理服务器快速搭建
-
-1)[进入腾讯云官网购买云服务器CVM](https://www.qcloud.com/product/cvm.html)
-
-![image](https://cloud.githubusercontent.com/assets/12195370/19964833/f6b57b22-a1fe-11e6-9cdf-512c318eabfb.png)
-
-                                              图1 选购云服务器CVM
-                                              
-![image](https://cloud.githubusercontent.com/assets/12195370/19965033/074bb400-a200-11e6-8f00-9909635fb616.png) 
-
-                                              图2 选择机型
-                                              
-![image](https://cloud.githubusercontent.com/assets/12195370/19965102/529823d0-a200-11e6-891f-ee0e8552af95.png)
-                                              
-                                              图3 在服务市场中选择镜像
-                                              
-![image](https://cloud.githubusercontent.com/assets/12195370/19965255/20c224b8-a201-11e6-9092-5cbb15becb00.png)
-                        
-                                              图4 选择会话服务器镜像
-                            
-2)登录购买的服务器手动配置mysql    
-
-2.1)编辑sql脚本
-
-    vi /opt/lampp/htdocs/mina_auth/system/db/db.sql
     
-在脚本的最前端加入 use cAuth;
+## 据库设计
 
-2.2)自动建表
+全局信息表 `cAppInfo` 保存会话服务所需要的配置项。
 
-    /opt/lampp/bin/mysql -u root -p </opt/lampp/htdocs/mina_auth/system/db/db.sql
+<table>
+  <tbody>
+  <tr>
+    <th>Field</th>
+    <th>Type</th>
+    <th>Null</th>
+    <th>key</th>
+    <th>Extra</th>
+  </tr>
+  <tr>
+    <td>appid</td>
+    <td>varchar(200)</td>
+    <td>NO</td>
+    <td>PRI</td>
+    <td>申请微信小程序开发者时，微信分配的 appId</td>
+  </tr>
+  <tr>
+    <td>secret</td>
+    <td>varchar(300)</td>
+    <td>NO</td>
+    <td></td>
+    <td>申请微信小程序开发者时，微信分配的 appSecret</td>
+  </tr>
+  <tr>
+    <td>login_duration</td>
+    <td>int(11)</td>
+    <td>NO</td>
+    <td></td>
+    <td>登录过期时间，单位为天，默认 30 天</td>
+  </tr>
+  <tr>
+    <td>session_duration</td>
+    <td>int(11)</td>
+    <td>NO</td>
+    <td></td>
+    <td>会话过期时间，单位为秒，默认为 3600 秒</td>
+  </tr>
+  
+  </tbody>
+</table>
+    
+
+会话记录 `cSessionInfo` 保存每个会话的数据。
+
+<table>
+  <tbody>
+  <tr>
+    <th>Field</th>
+    <th>Type</th>
+    <th>Null</th>
+    <th>key</th>
+    <th>Extra</th>
+  </tr>
+  <tr>
+    <td>id</td>
+    <td>bigint(20)</td>
+    <td>NO</td>
+    <td>MUL</td>
+    <td>会话 ID</td>
+  </tr>
+  <tr>
+    <td>skey</td>
+    <td>varchar(200)</td>
+    <td>NO</td>
+    <td></td>
+    <td>会话 Skey</td>
+  </tr>
+  <tr>
+    <td>create_time</td>
+    <td>int(11)</td>
+    <td>NO</td>
+    <td></td>
+    <td>会话创建时间，用于判断会话对应的 open_id 和 session_key 是否过期（是否超过 `cAppInfo` 表中字段 `login_duration` 配置的天数）</td>
+  </tr>
+  <tr>
+    <td>last_visit_time</td>
+    <td>int(11)</td>
+    <td>NO</td>
+    <td></td>
+    <td>最近访问时间，用于判断会话是否过期（是否超过 `cAppInfo` 表中字段 `session_duration` 的配置的秒数）</td>
+  </tr>
+  <tr>
+    <td>open_id</td>
+    <td>varchar(200)</td>
+    <td>NO</td>
+    <td>MUL</td>
+    <td>微信服务端返回的 `open_id` 值 </td>
+  </tr>
+  <tr>
+    <td>session_key</td>
+    <td>varchar(200)</td>
+    <td>NO</td>
+    <td></td>
+    <td>微信服务端返回的 `session_key` 值 </td>
+  </tr>
+  <tr>
+    <td>user_info</td>
+    <td>text</td>
+    <td>YES</td>
+    <td></td>
+    <td>已解密的用户数据</td>
+  </tr>
+  </tbody>
+</table>
+
+建数据库的详细 SQL 脚本请参考 [db.sql](https://github.com/tencentyun/wafer-session-server/blob/master/db.sql)
+
+
+## 搭建会话管理服务器
+
+选择合适的方式[部署](https://github.com/tencentyun/wafer/wiki#%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F) Wafer 服务后，按照部署类型：
+
+* 自动部署 - 无需进行任何操作，会话服务器已经可以使用
+* 镜像部署 - 按照下面步骤进行初始化工作
+* 自行部署 - 按照下面步骤进行初始化工作
+
+
+### 环境准备
+
+确保机器中已安装 LAMP 环境。
+
+### 代码部署
+
+把本项目代码部署到 `/opt/lampp/htdocs/mina_auth` 目录中。
+
+### 自动建表
+
+执行下面命令创建运行时所需表：
+
+```sh
+/opt/lampp/bin/mysql -u root -p mypassword < /opt/lampp/htdocs/mina_auth/system/db/db.sql
+```
    
-2.3）初始化appid和scretkey
+## 初始化 appId 和 appSecret
 
-    /opt/lampp/bin/mysql -u root -p root #登录本地mysql
+登录到 MySql 后，手动插入配置到 `cAuth` 表中。
+
+```sh
+/opt/lampp/bin/mysql -u root -p root #登录本地mysql
+use cAuth;
+insert into cAppinfo set appid='Your appid',secret='Your secret';
+```
     
-    use cAuth;#选中数据库
-    
-    insert into cAppinfo set appid='Your appid',secret='Your secret';
-    
-2.3)测试服务可用性
-   
-    curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.id_skey","para":{"code":"001EWYiD1CVtKg0jXGjD1e6WiD1EWYiC","encrypt_data":"DNlJKYA0mJ3+RDXD/syznaLVLlaF4drGzeZvJFmjnEKtOAi37kAzC/1tCBr7KqGX8EpiLuWl8qt/kcH9a4LxDC5LQvlRLJlDogTEIwtlT/2jBWBuWwBC3vWFhm7Uuq5AOLZV+xG9UmWPKECDZX9UZpWcPRGQpiY8OOUNBAywVniJv6rC2eADFimdRR2qPiebdC3cry7QAvgvttt1Wk56Nb/1TmIbtJRTay5wb+6AY1H7AT1xPoB6XAXW3RqODXtRR0hZT1s/o5y209Vcc6EBal5QdsbJroXa020ZSD62EnlrOwgYnXy5c8SO+bzNAfRw59SVbI4wUNYz6kJb4NDn+y9dlASRjlt8Rau4xTQS+fZSi8HHUwkwE6RRak3qo8YZ7FWWbN2uwUKgQNlc/MfAfLRcfQw4XUqIdn9lxtRblaY="}}}' http://127.0.0.1/mina_auth/
+### 测试服务可用性
+
+```sh
+curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qcloud.cam.id_skey","para":{"code":"001EWYiD1CVtKg0jXGjD1e6WiD1EWYiC","encrypt_data":"DNlJKYA0mJ3+RDXD/syznaLVLlaF4drGzeZvJFmjnEKtOAi37kAzC/1tCBr7KqGX8EpiLuWl8qt/kcH9a4LxDC5LQvlRLJlDogTEIwtlT/2jBWBuWwBC3vWFhm7Uuq5AOLZV+xG9UmWPKECDZX9UZpWcPRGQpiY8OOUNBAywVniJv6rC2eADFimdRR2qPiebdC3cry7QAvgvttt1Wk56Nb/1TmIbtJRTay5wb+6AY1H7AT1xPoB6XAXW3RqODXtRR0hZT1s/o5y209Vcc6EBal5QdsbJroXa020ZSD62EnlrOwgYnXy5c8SO+bzNAfRw59SVbI4wUNYz6kJb4NDn+y9dlASRjlt8Rau4xTQS+fZSi8HHUwkwE6RRak3qo8YZ7FWWbN2uwUKgQNlc/MfAfLRcfQw4XUqIdn9lxtRblaY="}}}' http://127.0.0.1/mina_auth/
+```
     
     
