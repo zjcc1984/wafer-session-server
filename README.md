@@ -157,7 +157,7 @@ curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qclou
 </table>
 
     
-## 据库设计
+## 数据库设计
 
 全局信息表 `cAppInfo` 保存会话服务所需要的配置项。
 
