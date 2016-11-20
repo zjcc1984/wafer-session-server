@@ -28,7 +28,7 @@ Content-Type: application/json;charset=utf-8
     "componentName": "MA",
     "interface": {
         "interfaceName": "qcloud.cam.id_skey",
-        "para": { code: "...", encrypt_data: "..." }
+        "para": { "code": "...", "encrypt_data": "..." }
     }
 }
 ```
