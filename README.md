@@ -53,7 +53,9 @@ HTTP 输出为响应内容，下面是响应内容说明：
 }
 ```
 
-返回结果。returnCode为返回码，如果成功则取值为0，如果失败则取值为具体错误码；returnMessage 内容为出错信息；returnData为具体内容。
+* `returnCode` - 返回码，如果成功则取值为 `0`，如果失败则取值为具体错误码；
+* `returnMessage` - 如果返回码非零，内容为出错信息；
+* `returnData` - 返回的数据
 
 ### `qcloud.cam.id_skey`
 
