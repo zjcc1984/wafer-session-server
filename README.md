@@ -57,7 +57,7 @@ HTTP 输出为响应内容，下面是响应内容说明：
 * `returnMessage` - 如果返回码非零，内容为出错信息；
 * `returnData` - 返回的数据
 
-### `qcloud.cam.id_skey`
+### qcloud.cam.id_skey
 
 `qcloud.cam.id_skey` 处理用户登录请求。
 
@@ -73,7 +73,7 @@ curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qclou
 * `skey` - 会话 skey
 * `userInfo` - 用户信息
 
-### `qcloud.cam.auth`
+### qcloud.cam.auth
 
 使用 `qcloud.cam.auth` 接口检查用户登录态。
 
