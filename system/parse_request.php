@@ -40,7 +40,12 @@ class parse_request
                         $code = $json_decode['interface']['para']['code'];
                         $encrypt_data = $json_decode['interface']['para']['encrypt_data'];
                         $auth = new Auth();
-                        $ret = $auth->get_id_skey($code,$encrypt_data);
+                        if(!isset($json_decode['interface']['para']['iv']))
+                            $ret = $auth->get_id_skey($code,$encrypt_data);
+                        else{
+                            $iv = $json_decode['interface']['para']['iv'];
+                            $ret = $auth->get_id_skey($code,$encrypt_data,$iv);
+                        }
                     } else {
                         $ret['returnCode'] = return_code::MA_PARA_ERR;
                         $ret['returnMessage'] = 'PARA_ERR';

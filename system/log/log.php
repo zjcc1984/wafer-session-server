@@ -237,7 +237,7 @@ class Log {
             $this->_sub_path = date("Y-m-d");
             $this->_file_idx = 0;
         }
-        del_dir_file($this->_log_path.date("Y-m-d",strtotime("-2 day")),true);
+        del_dir_file($this->_log_path.date("Y-m-d",strtotime("-5 day")),true);
         file_exists($this->_log_path.$this->_sub_path) OR mkdir($this->_log_path.$this->_sub_path, 0755, TRUE);
 
         if ( ! is_dir($this->_log_path) OR ! is_really_writable($this->_log_path))
