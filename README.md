@@ -196,7 +196,7 @@ curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qclou
     <td>int(11)</td>
     <td>NO</td>
     <td></td>
-    <td>会话过期时间，单位为秒，默认为 3600 秒</td>
+    <td>会话过期时间，单位为秒，默认为 2592000 秒(即30天)</td>
   </tr>
   
   </tbody>
@@ -216,49 +216,56 @@ curl -i -d'{"version":1,"componentName":"MA","interface":{"interfaceName":"qclou
   </tr>
   <tr>
     <td>id</td>
-    <td>bigint(20)</td>
+    <td>int(11)</td>
     <td>NO</td>
     <td>MUL</td>
-    <td>会话 ID</td>
+    <td>会话 ID（自增长）</td>
+  </tr>
+   <tr>
+    <td>uuid</td>
+    <td>varchar(100)</td>
+    <td>NO</td>
+    <td></td>
+    <td>会话 uuid</td>
   </tr>
   <tr>
     <td>skey</td>
-    <td>varchar(200)</td>
+    <td>varchar(100)</td>
     <td>NO</td>
     <td></td>
     <td>会话 Skey</td>
   </tr>
   <tr>
     <td>create_time</td>
-    <td>int(11)</td>
+    <td>datetime</td>
     <td>NO</td>
     <td></td>
     <td>会话创建时间，用于判断会话对应的 open_id 和 session_key 是否过期（是否超过 `cAppInfo` 表中字段 `login_duration` 配置的天数）</td>
   </tr>
   <tr>
     <td>last_visit_time</td>
-    <td>int(11)</td>
+    <td>datetime</td>
     <td>NO</td>
     <td></td>
     <td>最近访问时间，用于判断会话是否过期（是否超过 `cAppInfo` 表中字段 `session_duration` 的配置的秒数）</td>
   </tr>
   <tr>
     <td>open_id</td>
-    <td>varchar(200)</td>
+    <td>varchar(100)</td>
     <td>NO</td>
     <td>MUL</td>
     <td>微信服务端返回的 `open_id` 值 </td>
   </tr>
   <tr>
     <td>session_key</td>
-    <td>varchar(200)</td>
+    <td>varchar(100)</td>
     <td>NO</td>
     <td></td>
     <td>微信服务端返回的 `session_key` 值 </td>
   </tr>
   <tr>
     <td>user_info</td>
-    <td>text</td>
+    <td>varchar(2048)</td>
     <td>YES</td>
     <td></td>
     <td>已解密的用户数据</td>
