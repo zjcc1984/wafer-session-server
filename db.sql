@@ -6,7 +6,7 @@ CREATE TABLE `cAppinfo` (
   `appid` varchar(200) COLLATE utf8_unicode_ci NOT NULL ,
   `secret` varchar(300) COLLATE utf8_unicode_ci NOT NULL,
   `login_duration` int(11) DEFAULT '30',
-  `session_duration` int(11) DEFAULT '3600',
+  `login_duration` int(11) DEFAULT '3600',
   `session_duration` int(11) DEFAULT '2592000',
   `qcloud_appid` varchar(300) COLLATE utf8_unicode_ci DEFAULT 'appid_qcloud',
   `ip` varchar(50) COLLATE utf8_unicode_ci DEFAULT '0.0.0.0',
